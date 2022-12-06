@@ -2,12 +2,15 @@
 class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
-    @applied_ratings = params.key?(:ratings) ? params[:ratings].keys : []
 
     if params.length == 2
       @applied_ratings = @all_ratings
+      @sort_selected = ""
+    else
+      @applied_ratings = params.key?(:ratings) ? params[:ratings] : []
+      @applied_ratings = @applied_ratings.respond_to?(:keys) ? @applied_ratings.keys : @applied_ratings
+      @sort_selected = params[:sort_by]
     end
-    
 
     @movies = Movie.where(rating: @applied_ratings).order(params[:sort_by])
   end

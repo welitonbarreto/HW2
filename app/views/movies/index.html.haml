@@ -18,12 +18,13 @@
 
 
 = link_to 'Add new movie', new_movie_path
-= link_to 'Movie title', movies_path(:sort_by=>"title"),:id => "title_header"
-= link_to 'Release date', movies_path(:sort_by=>"release_date"), :id => "release_date_header"
+= link_to 'Movie title', movies_path(:sort_by=>"title",:ratings => @applied_ratings),:id => "title_header"
+= link_to 'Release date', movies_path(:sort_by=>"release_date",:ratings => @applied_ratings), :id => "release_date_header"
 
-= form_tag movies_path, :method => :get do
+= form_tag movies_path, :method => :get, :id => "ratings_form" do
+  = hidden_field_tag 'sort_by', @sort_selected
   Include: 
   - @all_ratings.each do |rating|
     = rating
-    = check_box_tag "ratings[#{rating}]", 'yes', (@applied_ratings.include? rating)
-  = submit_tag 'Refresh'
+    = check_box_tag "ratings[#{rating}]", 'yes', (@applied_ratings.include? rating), :id => "ratings_#{rating}"
+  = submit_tag 'Refresh', :id => "ratings_submit"
