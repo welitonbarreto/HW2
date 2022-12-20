@@ -3,16 +3,22 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
 
-    if params.length == 2
-      @applied_ratings = @all_ratings
-      @sort_selected = ""
-    else
-      @applied_ratings = params.key?(:ratings) ? params[:ratings] : []
-      @applied_ratings = @applied_ratings.respond_to?(:keys) ? @applied_ratings.keys : @applied_ratings
-      @sort_selected = params[:sort_by]
+    @applied_sort = params[:sort_by] || session[:sort_by] || ""
+    @applied_ratings = params[:ratings] || session[:ratings] || @all_ratings
+    
+    if @applied_ratings.respond_to?(:keys)
+      @applied_ratings = @applied_ratings.keys
     end
 
-    @movies = Movie.where(rating: @applied_ratings).order(params[:sort_by])
+    if not session[:sort_by].eql? params[:sort_by]
+      session[:sort_by] = @applied_sort
+    end
+
+    if not session[:ratings].eql? params[:ratings]
+      session[:ratings] = @applied_ratings
+    end
+
+    @movies = Movie.where(rating: @applied_ratings).order(@applied_sort)
   end
 
   def show
